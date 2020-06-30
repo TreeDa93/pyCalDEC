@@ -43,7 +43,7 @@ print('Это работает и равно = '+ str(kq1))
 from CoilMatrix import *
 
 Kf = CoilFunction(q, m, Q, Qkp).CoilT() # Winding matrix
-print(Kf)
+
 
 
 

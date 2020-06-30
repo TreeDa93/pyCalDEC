@@ -59,7 +59,9 @@ def FindResist2(deltaz, muS, Hi, Hp1):
 
 def FindRtabazAndGbas(tz,deltaz,Bi,mu0,gb):
     """The function calculate basis magnetic resistance Rtbaz
-    and  magnetic resistance for each layer of model"""
+    and  magnetic resistance for each layer of model
+
+    Странно рассчитывается Rtbaz"""
     Rtbaz = tz / (mu0 * deltaz * Bi)
     gbas = gb * Rtbaz
     flag = 'No print'
@@ -69,6 +71,12 @@ def FindRtabazAndGbas(tz,deltaz,Bi,mu0,gb):
 
 
 def FindVse(Qkp,Q,v,tz,omega):
+    """ The function is intended to calculate matrix of velocity Vse
+
+     Parameters :
+     Qkp is the number of marginal slots; Q is the number of slots;
+     v is the volicty of secondary element motion;
+     tz is the pole pitch; omega is angular velocity of field"""
     Vse = np.zeros((Q+2*Qkp, Q+2*Qkp), dtype=complex)
     for x in range(Q+2*Qkp):
         if x > 1:
@@ -82,6 +90,10 @@ def FindVse(Qkp,Q,v,tz,omega):
     return Vse
 
 def FindLc(Qkp, Q):
+    """The function is intended to calculate inductance of region of models.
+    In the version of the program the valuse is equal zero. We should consider it
+
+    Parameters: Qkp is namber of marginal slots; Q is number of slots"""
     lc = 0
     Lc = np.zeros((2*Qkp+Q))
     for x in range(2*Qkp+Q):
@@ -92,6 +104,16 @@ def FindLc(Qkp, Q):
     return Lc
 
 def FindZ(Qz,Qkp,Q,Rn0,Rt0,GX0,omega,v,tz,Rk0,Ra0):
+    """The function of creating matrix of magnetic resistance of the model
+
+    Parameters:
+        Qz is number of layers; Qkp is the number of marginal slots; Q is the number of slots;
+        Rn0 is the matrix of magnetic resistance of  normal component to inductor plane or y-component
+        GX0 is the column of absolute electrical conductivity for each layer of the model
+        v is the velocity of secondary element motion;
+        tz is the pole pitch;
+        Rk0 is the
+        Ra0 is the """
     Z = np.zeros((Q+2*Qkp, Q+2*Qkp, Qz), dtype=complex)
     for k in range(Qz):
         for i in range(Q+2*Qkp):
@@ -118,6 +140,14 @@ def FindZ(Qz,Qkp,Q,Rn0,Rt0,GX0,omega,v,tz,Rk0,Ra0):
     return Z
 
 def FindResistMassive(Qkp,Qz,Rt0,Q, Z):
+    """ The function support to calculate R, Z0, R0
+
+    Parameters:
+    Qkp is the number of marginal sots;
+    Qz is the number of layers;
+    Q is the number of slots;
+    Rt0 is the value of tangential magnetic resistance;
+    Z is the matrix of magnetic resistance of the model;"""
     R = np.zeros((2 * Qkp + Q, 2 * Qkp + Q, Qz), dtype=complex)
     Z0 = np.zeros((2 * Qkp + Q, 2 * Qkp + Q, Qz), dtype=complex)
     r0  = np.zeros((2 * Qkp + Q, 2 * Qkp + Q, Qz), dtype=complex)
@@ -132,6 +162,10 @@ def FindResistMassive(Qkp,Qz,Rt0,Q, Z):
     return R, Z0, r0
 
 def FindaABS(Qz,R,Z0,r0,Z, Q, Qkp):
+    """ The function is intended for
+    :parameters:
+    Qz is the number of layers;
+    """
     a = np.zeros((Q+2*Qkp, Q+2*Qkp, Qz+1), dtype=complex)
     for k in range(1, Qz+1):
         for i in range(Q+2*Qkp):
@@ -166,6 +200,18 @@ def Findb(Qz,Z0,r0,Z,R, Q, Qkp):
     return b
 
 def FindFXX(b,a,Qz,Rtbaz,F0s, Q, Qkp):
+    """The function is intended to calculate magnetic flux at each cell of the model
+
+    FXX is massive of values of magnetic fluxes * We need add explanation of index descripiton
+
+    Parameters:
+        b is the
+        a is the
+        Qz is the number of layers of model
+        Rtbaz is the base magnetic resistance *
+        F0 is the column of magnetic motive forces *
+        Q is the number of slots
+        Qkp is the number of marginal slots"""
     FXX = np.zeros((Q+2*Qkp,Q+2*Qkp, Qz), dtype=complex)
     for k in range(Qz):
         for i in range(Q+2*Qkp):
