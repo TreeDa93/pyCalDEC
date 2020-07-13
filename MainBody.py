@@ -35,14 +35,12 @@ kq1 = TransversalEffectFactor()
 kq = kq.Bolton()
 kq1 = kq1.Bolton()
 
-print('Это работает и равно = '+ str(kq))
-print('Это работает и равно = '+ str(kq1))
+print('Это работает и равно = ' + str(kq))
+print('Это работает и равно = ' + str(kq1))
 
 
 "We set the distribution of coils in space"
-from CoilMatrix import *
 
-Kf = CoilFunction(q, m, Q, Qkp).CoilT() # Winding matrix
 
 
 
@@ -52,34 +50,27 @@ h - column of height size
 mut , mun is tangential and normal components of permeability of each layers
  gamma is el. conductivity for each layer """
 
-from Discretization import *
 
 
-h, mut, mun, gamma, gammaotn = Discrete().discretka(gammaSE, kq)
 
 
-"""In the part of the program we calculate matrices of resistance"""
-from FindMatrixResistance import *
 
-Rn0, Rt0, g0, GX0, gb = FindResist(gammaSE,mu0,deltaz,deltaSE,kq,h,mun,tz,mut,gammaotn)
-Ra0, Rk0 = FindResist2(deltaz, muS, Hi, Hp1)
-Rtbaz, gbas = FindRtabazAndGbas(tz,deltaz,Bi,mu0,gb)
-Vse = FindVse(Qkp,Q,v,tz,omega)
+"""
 
-Z = FindZ(Qz,Qkp,Q,Rn0,Rt0,GX0,omega,v,tz,Rk0,Ra0)
+from FindMatrixResistance import TestDiaFun, TestDiaFun2
 
-R, Z0, r0 = FindResistMassive(Qkp,Qz,Rt0,Q, Z)
-
-a = FindaABS(Qz,R,Z0,r0,Z, Q, Qkp)
-
-b = Findb(Qz,Z0,r0,Z,R, Q, Qkp)
-
-F0s = FindF0s(IfA, IfB, IfC, Up, Rtbaz, Kf)
-
-FXX = FindFXX(b,a,Qz,Rtbaz,F0s, Q, Qkp)
-
-D = FindD(Qkp,Q)
-
-BnX, BtX = FindBtBn(Qz,Bi,h,tz,D,FXX,Q, Qkp)
+import numpy as np
+test1 = TestFun2()
+test2 = TestFun5()
+x = np.diag(test2)
 
 
+from scipy.sparse import dia_matrix
+x = dia_matrix(([rs1,s], [0,1]), shape=(10,10)).toarray()
+
+x = dia_matrix((rs,rs1, rs2, [0,1,-1], shape(10,10)).toarray()
+
+x = dia_matrix(([rs,rs1,rs2, [0,1,-1], shape=(10,10)).toarray()
+
+rs, rs2, rs3, x = TestDiaFun2()"
+"""
