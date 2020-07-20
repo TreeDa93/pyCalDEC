@@ -14,19 +14,11 @@ def create_dia_matrix(y, k):
         return x
 
 
-def create_csr_marix(data):
-        row = np.arange(len(data))
-        x = csr_matrix(data, (row, row))
+def create_csr_matrix(data, row, column):
+        x = csr_matrix((data, (row, column)))
         return x
 
-
-def create_f(y):
-        size = len(y)
-        f = rand(size)
-        return f
-
-
-def solve_it(z, f):
-        z = z.tocsr()
-        result = spsolve(z, f)
+def solve_it(r, mmf):
+        r = csr_matrix(r)
+        result = spsolve(r, mmf)
         return result
