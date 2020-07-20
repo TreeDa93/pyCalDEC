@@ -14,9 +14,8 @@ def create_dia_matrix(y, k):
         return x
 
 
-def create_csr_marix(data):
-        row = np.arange(len(data))
-        x = csr_matrix(data, (row, row))
+def create_csr_matrix(data, row, column):
+        x = csr_matrix((data, (row, column)))
         return x
 
 
