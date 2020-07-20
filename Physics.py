@@ -128,6 +128,14 @@ class MagneticField:
         r = np.zeros((self.size, self.size))
         i_1 = np.arange(self.size)
         j_1 = np.arange(self.size)
+        mmf_bc_up = np.zeros(self.size)
+        mmf_bc_down = np.zeros(self.size)
+        mmf_bc_right = np.zeros(self.size)
+        mmf_bc_left = np.zeros(self.size)
+        bc_fluxes_up = np.zeros(self.size_i)
+        bc_fluxes_down = np.zeros(self.size_i)
+        bc_fluxes_right = np.zeros(self.size_j)
+        bc_fluxes_left = np.zeros(self.size_j)
         counter = 0
 
         for j in range(self.size_j):
@@ -137,48 +145,61 @@ class MagneticField:
                 counter += 1
 
         counter = 0
+        counter_bc = 0
         for j in range(self.size_j):
             for i in range(self.size_i):
                 if counter >= (self.size - self.size_i):
+                    mmf_bc_up[counter] = -self.formula_resistance_rmt_up(i, j) * bc_fluxes_up[counter_bc]
                     counter += 1
+                    counter_bc += 1
                 else:
                     r[i_1[counter], j_1[counter] + self.size_j] = -self.formula_resistance_rmt_up(i, j)
                     counter += 1
 
         counter = 0
+        counter_bc = 0
         for j in range(self.size_j):
             for i in range(self.size_i):
                 if counter < self.size_i:
+                    mmf_bc_down[counter] = -self.formula_resistance_rmt_down(i, j) * bc_fluxes_down[counter_bc]
                     counter += 1
+                    counter_bc += 1
                 else:
                     r[i_1[counter], j_1[counter] - self.size_j] = \
                         -self.formula_resistance_rmt_down(i, j)
                     counter += 1
 
         counter = 0
+        counter_bc = 0
         stopper = self.size_i - 1
         for j in range(self.size_j):
             for i in range(self.size_i):
                 if counter == stopper:
+                    mmf_bc_left[counter] = -self.formula_resistance_rmn_left(i, j) * bc_fluxes_left[counter_bc]
                     counter += 1
+                    counter_bc += 1
                     stopper += self.size_i
                 else:
                     r[i_1[counter] + 1, j_1[counter]] = -self.formula_resistance_rmn_left(i, j)
                     counter += 1
+
         counter = 0
+        counter_bc = 0
         stopper = self.size_i - 1
         for j in range(self.size_j):
             for i in range(self.size_i):
                 if counter == stopper:
+                    mmf_bc_right[counter] = -self.formula_resistance_rmn_right(i, j) * bc_fluxes_right[counter_bc]
                     counter += 1
+                    counter_bc += 1
                     stopper += self.size_i
                 else:
                     r[i_1[counter], j_1[counter] + 1] = -self.formula_resistance_rmn_right(i, j)
                     counter += 1
-        return r
+        return r, mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down
 
     def mmf(self):
-        """The function is intended to build the vectorcolumn of right free terms of linear equations system """
+        """The function is intended to build the vector-column of right free terms of linear equations system """
         counter = 0
         mmf = np.zeros((self.size))
         for j in range(self.size_j):
@@ -192,7 +213,7 @@ class MagneticField:
     def mmf_test(self):
 
         counter = 0
-        mmf = np.zeros((self.size))
+        mmf = np.zeros(self.size)
         for j in range(self.size_j):
             for i in range(self.size_i):
                 if j == 3:
