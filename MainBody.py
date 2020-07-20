@@ -12,7 +12,7 @@ data = grid(axis_x, axis_y, mat_y, 10)
 
 from Physics import MagneticField
 a = MagneticField(data)
-r = a.set_matrix()
+r, mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down = a.set_matrix()
 mmf = a.mmf_test()
 
 import Solvers as sl
