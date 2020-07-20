@@ -18,5 +18,8 @@ mmf = a.mmf_test()
 import Solvers as sl
 
 
+solution = sl.solve_it(r, mmf)
+
+
 
 
