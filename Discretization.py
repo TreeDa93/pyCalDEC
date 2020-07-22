@@ -309,7 +309,7 @@ def discret_Y(domains=((10, 1), (15, 2), (30, 4))):
       number of divisions))
     :return divided axis and material for every point
     """
-    axis_size = np.asarray(domains).sum(0)[1] + 1
+    axis_size = int(np.asarray(domains).sum(0)[1]) + 1
     axis_init = [0 for j in range(len(domains))]
     counter = 0
     start = 0
