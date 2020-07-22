@@ -54,13 +54,15 @@ class Cell:
     """
     scale_factor = 1
 
-    def __init__(self, material=Material(0, 0), center=Coord(0, 0), initial=Coord(0, 0), tp="", velocity=0.0, index=""):
+    def __init__(self, material=Material(0, 0), center=Coord(0, 0), initial=Coord(0, 0), tp="", velocity=0.0, index="",
+                 current=0.0):
         self.mat = material
         self.center = center
         self.type = tp
         self.init = initial
         self.vel = velocity
         self.index = index
+        self.current = current
 
     def height(self):
         height = (self.center.y - self.init.y) * 2 * self.scale_factor
@@ -123,6 +125,7 @@ class Body:
         self.distr = 0
         self.bodies.append(self)
         self.index = ""
+        self.current = 0.0
 
     def __repr__(self):
         return f"Material({self.mat}) Type={self.type} Velocity={self.vel}"
@@ -130,7 +133,7 @@ class Body:
     def __str__(self):
         return f"Material({self.mat}) Type={self.type} Velocity={self.vel}"
 
-    def coils(self, height, width, start=Coord(0, 0), step=Coord(0, 0), amount=1, index=""):
+    def coils(self, height, width, start=Coord(0, 0), step=Coord(0, 0), amount=1, index="", current=0.0):
         self.type = "coil"
         initial = [start, Coord(start.x+width, start.y+height)]
         if amount == 1:
@@ -143,6 +146,7 @@ class Body:
                                  Coord(self.distr[i-1][1].x+step.x+width*bool(step.x),
                                        self.distr[i-1][1].y+step.y+height*bool(step.y))]
         self.index = index
+        self.current = current
         return self
 
     def inductor(self, yoke_height, yoke_width, tooth_height, tooth_width, slot_pitch, slots_number, start=Coord(0, 0),
@@ -372,7 +376,7 @@ def body_grid(axis_x, axis_y, bodies=()):
     for i in range(size_x-1):
         for j in range(size_y-1):
             mesh[i][j] = Cell(Material(0, 1), Coord(center_x[i], center_y[j]), Coord(axis_x[i], axis_y[j]),
-                              "other", 0.0)
+                              "other", velocity=0.0, current=0.0)
             for k in bodies:
                 size_distr = len(k.distr)
                 for counter in range(size_distr):
@@ -380,11 +384,11 @@ def body_grid(axis_x, axis_y, bodies=()):
                         (axis_x[i] < k.distr[counter][1].x) and (axis_y[j] < k.distr[counter][1].y)
                             and (k.type == "coil")):
                         mesh[i][j] = Cell(k.mat, Coord(center_x[i], center_y[j]),
-                                          Coord(axis_x[i], axis_y[j]), k.type, k.vel, k.index)
+                                          Coord(axis_x[i], axis_y[j]), k.type, k.vel, k.index, current=k.current)
                     elif ((axis_x[i] >= k.distr[counter][0].x) and (axis_y[j] >= k.distr[counter][0].y) and
                         (axis_x[i] < k.distr[counter][1].x) and (axis_y[j] < k.distr[counter][1].y)):
                         mesh[i][j] = Cell(k.mat, Coord(center_x[i], center_y[j]),
-                                          Coord(axis_x[i], axis_y[j]), k.type, k.vel)
+                                          Coord(axis_x[i], axis_y[j]), k.type, k.vel, current=k.current)
     return mesh
 
 
@@ -408,7 +412,7 @@ steel = Material(0, 500)
 Coord.scale_factor = 1
 
 inductor = Body(steel).inductor(Hy, Bi, Hp, Bz, tz, Q, Coord(marg, 0.0))
-coil = Body(copper).coils(Hp, Bp, Coord(marg+Bz, Hy), Coord(Bz, 0), Q, "phaseA")
+coil = Body(copper).coils(Hp, Bp, Coord(marg+Bz, Hy), Coord(Bz, 0), Q, "phaseA", current=100)
 secondary = Body(copper).rect(d_se, Bi, Coord(marg, Hy+Hp+dz))
 
 axis_x = discret_X((marg, 1), ((Bz, 1), (Bp, 1)), True, Q)
