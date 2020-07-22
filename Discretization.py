@@ -52,6 +52,8 @@ class Cell:
         mu - Calculates the cell absolute magnetic permeability
         sigma - Return the cell electrical conductivity
     """
+    scale_factor = 1
+
     def __init__(self, material=Material(0, 0), center=Coord(0, 0), initial=Coord(0, 0), tp="", velocity=0.0, index=""):
         self.mat = material
         self.center = center
@@ -61,11 +63,11 @@ class Cell:
         self.index = index
 
     def height(self):
-        height = (self.center.y - self.init.y)*2
+        height = (self.center.y - self.init.y) * 2 * self.scale_factor
         return height
 
     def width(self):
-        width = (self.center.x - self.init.x) * 2
+        width = (self.center.x - self.init.x) * 2 * self.scale_factor
         return width
 
     def mu(self):
@@ -75,6 +77,18 @@ class Cell:
     def sigma(self):
         sigma = self.mat.sigma
         return sigma
+
+    def init_x(self):
+        return self.init.x * self.scale_factor
+
+    def init_y(self):
+        return self.init.y * self.scale_factor
+
+    def center_x(self):
+        return self.center.x * self.scale_factor
+
+    def center_y(self):
+        return self.center.y * self.scale_factor
 
     def __repr__(self):
         return f"Material({self.mat}) Center({self.center}) Initial=({self.init} Type=({self.type}) " \
@@ -101,7 +115,7 @@ class Body:
         rect - creates rectangular
     """
     bodies = []
-    
+
     def __init__(self, material=Material(0, 0), velocity=0.0):
         self.mat = material
         self.vel = velocity
@@ -259,10 +273,7 @@ def discret_X(marginal=(0, 0), domains=((15, 2), (30, 4)), periodic=False, perio
 
     if marginal[0] and not periodic:
         start = 0
-        total_domains = []
-        total_domains.append(marginal)
-        total_domains.append(domains)
-        total_domains.append(marginal)
+        total_domains = [marginal, domains, marginal]
         counter = 0
         for i in total_domains:
             axis_init[counter] = list(np.linspace(start, i[0] + start, i[1], endpoint=False))
@@ -294,6 +305,7 @@ def discret_Y(domains=((10, 1), (15, 2), (30, 4))):
       number of divisions))
     :return divided axis and material for every point
     """
+    axis_size = np.asarray(domains).sum(0)[1] + 1
     axis_init = [0 for j in range(len(domains))]
     counter = 0
     start = 0
@@ -302,10 +314,12 @@ def discret_Y(domains=((10, 1), (15, 2), (30, 4))):
         start += i[0]
         counter += 1
     axis_init[-1].append(start)
-    axis = []
+    axis = [0 for j in range(axis_size)]
+    counter = 0
     for i in axis_init:
         for j in i:
-            axis.append(j)
+            axis[counter] = j
+            counter += 1
     return axis
 
 
@@ -375,8 +389,8 @@ def body_grid(axis_x, axis_y, bodies=()):
 
 
 # Example of code
-"""
-Hy =5
+# """
+Hy = 5
 Hp = 6
 dz = 1
 d_se = 2
@@ -387,7 +401,7 @@ Q = 3
 marg = 10
 tz = Bp + Bz
 
-air = Material(0, 0)
+air = Material(0, 1)
 copper = Material(100, 1)
 steel = Material(0, 500)
 
@@ -400,8 +414,10 @@ secondary = Body(copper).rect(d_se, Bi, Coord(marg, Hy+Hp+dz))
 axis_x = discret_X((marg, 1), ((Bz, 1), (Bp, 1)), True, Q)
 axis_y = discret_Y(((Hy, 1), (Hp, 1), (dz, 1), (d_se, 1)))
 
+Cell.scale_factor = 0.001
+
 data = body_grid(axis_x, axis_y, Body.bodies)
-"""
+# """
 
 
 # class Discrete:
