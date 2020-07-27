@@ -380,13 +380,13 @@ def body_grid(axis_x, axis_y, bodies=()):
             for k in bodies:
                 size_distr = len(k.distr)
                 for counter in range(size_distr):
-                    if ((axis_x[i] >= k.distr[counter][0].x) and (axis_y[j] >= k.distr[counter][0].y) and
-                        (axis_x[i] < k.distr[counter][1].x) and (axis_y[j] < k.distr[counter][1].y)
+                    if ((center_x[i] >= k.distr[counter][0].x) and (center_y[j] >= k.distr[counter][0].y) and
+                        (center_x[i] < k.distr[counter][1].x) and (center_y[j] < k.distr[counter][1].y)
                             and (k.type == "coil")):
                         mesh[i][j] = Cell(k.mat, Coord(center_x[i], center_y[j]),
                                           Coord(axis_x[i], axis_y[j]), k.type, k.vel, k.index, current=k.current)
-                    elif ((axis_x[i] >= k.distr[counter][0].x) and (axis_y[j] >= k.distr[counter][0].y) and
-                        (axis_x[i] < k.distr[counter][1].x) and (axis_y[j] < k.distr[counter][1].y)):
+                    elif ((center_x[i] >= k.distr[counter][0].x) and (center_y[j] >= k.distr[counter][0].y) and
+                        (center_x[i] < k.distr[counter][1].x) and (center_y[j] < k.distr[counter][1].y)):
                         mesh[i][j] = Cell(k.mat, Coord(center_x[i], center_y[j]),
                                           Coord(axis_x[i], axis_y[j]), k.type, k.vel, current=k.current)
     return mesh
