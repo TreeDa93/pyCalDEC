@@ -392,35 +392,35 @@ def body_grid(axis_x, axis_y, bodies=()):
     return mesh
 
 
-# Example of code
-# """
-Hy = 5
-Hp = 6
-dz = 1
-d_se = 2
-Bi = 17
-Bz = 2
-Bp = 3
-Q = 3
-marg = 10
-tz = Bp + Bz
-
-air = Material(0, 1)
-copper = Material(100, 1)
-steel = Material(0, 500)
-
-Coord.scale_factor = 1
-
-inductor = Body(steel).inductor(Hy, Bi, Hp, Bz, tz, Q, Coord(marg, 0.0))
-coil = Body(copper).coils(Hp, Bp, Coord(marg+Bz, Hy), Coord(Bz, 0), Q, "phaseA", current=100)
-secondary = Body(copper).rect(d_se, Bi, Coord(marg, Hy+Hp+dz))
-
-axis_x = discret_X((marg, 1), ((Bz, 1), (Bp, 1)), True, Q)
-axis_y = discret_Y(((Hy, 1), (Hp, 1), (dz, 1), (d_se, 1)))
-
-Cell.scale_factor = 0.001
-
-data = body_grid(axis_x, axis_y, Body.bodies)
+# # Example of code
+# # """
+# Hy = 5
+# Hp = 6
+# dz = 1
+# d_se = 2
+# Bi = 17
+# Bz = 2
+# Bp = 3
+# Q = 3
+# marg = 10
+# tz = Bp + Bz
+#
+# air = Material(0, 1)
+# copper = Material(100, 1)
+# steel = Material(0, 500)
+#
+# Coord.scale_factor = 1
+#
+# inductor = Body(steel).inductor(Hy, Bi, Hp, Bz, tz, Q, Coord(marg, 0.0))
+# coil = Body(copper).coils(Hp, Bp, Coord(marg+Bz, Hy), Coord(Bz, 0), Q, "phaseA", current=100)
+# secondary = Body(copper).rect(d_se, Bi, Coord(marg, Hy+Hp+dz))
+#
+# axis_x = discret_X((marg, 1), ((Bz, 1), (Bp, 1)), True, Q)
+# axis_y = discret_Y(((Hy, 1), (Hp, 1), (dz, 1), (d_se, 1)))
+#
+# Cell.scale_factor = 0.001
+#
+# data = body_grid(axis_x, axis_y, Body.bodies)
 # """
 
 
