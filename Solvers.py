@@ -22,3 +22,7 @@ def solve_it(r, mmf):
         r = csr_matrix(r)
         result = spsolve(r, mmf)
         return result
+
+def solve_it_ling(r, mmf):
+        x = np.linalg.solve(r, mmf)
+        return x
