@@ -1,7 +1,9 @@
-
+import math as ma
+import numpy as np
 
 import math as ma
 import numpy as np
+
 """The file contain general data and information about considering model"""
 
 
@@ -63,4 +65,48 @@ sk = 1          # Slip of magnetic field
 Vsinhr = 2 * tau * F1   # Sinhronus velocity
 v = (1 - sk) * Vsinhr   # Operating velocity
 Flag = 'sk'
+
+
+Hy = 10 * 1e-3
+Hp = 10 * 1e-3
+dz = 10 * 1e-3
+d_se = 10 * 1e-3
+Bz = 10 * 1e-3
+Bp = 10 * 1e-3
+Q = 3
+tz = Bp + Bz
+Bi = tz * Q + Bz
+marg = 10
+
+phi_a = 0
+phi_z = - ma.pi / 6
+phi_b = - ma.pi*2/3
+phi_x = - ma.pi
+phi_c = ma.pi * 2 / 3
+phi_y = ma.pi / 6
+
+amplitude_current = 3e7
+current_a = amplitude_current * np.exp(1j*phi_a)
+current_b = amplitude_current * np.exp(1j*phi_b)
+current_x = amplitude_current * np.exp(1j*phi_x)
+current_c = amplitude_current * np.exp(1j*phi_c)
+current_y = amplitude_current * np.exp(1j*phi_y)
+current_z = amplitude_current * np.exp(1j*phi_z)
+
+
+
+def CalculateEpselon0(Bp1, deltaEkv, tz, tau, omega, mu0, deltaSE,
+                      gammaSE, Kmu):
+    """Recalculating factor to evaluate Karter's factor"""
+    gammaZ1 = ((Bp1 / (3 * deltaEkv)) ** 2) / (5 + (Bp1 / (3 * deltaEkv)))
+    Kdelta = tz / (tz - gammaZ1 * deltaEkv)  #
+    KdeltaR = (2 * tau) * (ma.sinh(ma.pi * deltaEkv / (2 * tau))) \
+              / (ma.pi * deltaEkv)
+    deltaekv = deltaEkv * Kdelta * Kmu  # Equivalent gap Эквивалентный зазор
+
+    epselon0 = omega * mu0 * deltaSE * gammaSE * tau ** 2 \
+               / (ma.pi ** 2 * deltaekv)
+
+    return epselon0
+
 

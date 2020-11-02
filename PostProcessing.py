@@ -1,4 +1,8 @@
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')   # 'TkAgg' - to run in Tkinter GUI; GTK3Agg
+
+
 import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.tri as tri

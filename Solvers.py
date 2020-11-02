@@ -1,10 +1,7 @@
-
-
 import numpy as np
 from scipy.sparse import dia_matrix, csr_matrix
 from scipy.sparse.linalg import spsolve
 from numpy.random import rand
-
 
 def create_dia_matrix(y, k):
         size = len(y)
