@@ -35,15 +35,11 @@ class MagneticField:
     def formula_resistance_rmn_left(self, i, j):
         """ The function describes formula of  mutual normal magnetic resistance of circuit loop with the loop located
         to lefter
-
+        R = h / (2 * w * L * mu) + h / (2 * w * L * mu)
         a[i][j].center.y is value y coordianat of the center of  the i-th cell at the j-th layer
         a[i][j].width() is the width of the i-th cell at the j-th layer
         a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell located at the j-th layer
                 """
-        # rmn_left = (self.a[i][j + 1].center.y - self.a[i][j].center.y) / (2 * self.a[i][j].width() * self.L) \
-        #           * (1 / self.a[i][j].mu() + 1 / self.a[i][j + 1].mu())
-        # rmn_left = self.a[i][j].height() / (self.a[i][j].width() * self.L * self.a[i][j].mu()) + \
-        #            self.a[i][j+1].height() / (self.a[i][j+1].width() * self.L * self.a[i][j+1].mu())
         rmn_left = self.a[i][j].height() / (2 * self.a[i][j].width() * self.L * self.a[i][j].mu()) + \
                    self.a[i][j + 1].height() / (2 * self.a[i][j + 1].width() * self.L * self.a[i][j + 1].mu())
 
@@ -58,11 +54,7 @@ class MagneticField:
                 a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell
                 located at the j-th layer
                         """
-        # rmn_right = (self.a[i + 1][j + 1].center.y - self.a[i + 1][j].center.y) / \
-        #             (2 * self.a[i + 1][j].width() * self.L) * (1 / self.a[i + 1][j].mu() + 1
-        #                                                        / self.a[i + 1][j + 1].mu())
-        # rmn_right = self.a[i+1][j].height() / (self.a[i+1][j].width() * self.L * self.a[i+1][j].mu()) + \
-        #             self.a[i+1][j + 1].height() / (self.a[i+1][j + 1].width() * self.L * self.a[i+1][j + 1].mu())
+
         rmn_right = self.a[i + 1][j].height() / (2 * self.a[i + 1][j].width() * self.L * self.a[i + 1][j].mu()) + \
                     self.a[i + 1][j + 1].height() / (2 * self.a[i + 1][j + 1].width() * self.L * self.a[i + 1][j + 1].mu())
 
