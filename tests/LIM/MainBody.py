@@ -110,32 +110,19 @@ mf.definiceCurrent(current=current_x, body='coil4')
 mf.definiceCurrent(current=current_c, body='coil5')
 mf.definiceCurrent(current=current_y, body='coil6')
 
+
+
 r, mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down = mf.set_matrix_complex_2()
 mmf = mf.mmf(mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down)
 
+from Modules.PhysMFnew import MagneticField2
 
-"добавим модуль для решения СЛАУ"
-
-import Modules.Solvers as sol
-
-"рещим СЛАУ магнитной задачи"
-solution = sol.solve_it_ling(r, mmf)
-
-"Добавим моду обрабоки резульататов"
-
-from Modules.PostProcessing import PostProcessing
-
-pp_class = PostProcessing(solution, mf)
-
-reshape_sol = pp_class.reshape_data(solution)
+mf2 = MagneticField2(mesh1, omega=314, label='mf2')
+r2 = mf2.calculateSelfResistence()
 
 
-reshape_sol = pp_class.reshape_data(solution)
-magnetic_flux_x = pp_class.calculate_magnetic_flux_x(reshape_sol)
-magnetic_flux_y = pp_class.calculate_magnetic_flux_y(reshape_sol)
-reshape_mmf = pp_class.reshape_data(mmf)
 
-pp_class.create_pcolor(magnetic_flux_y)
-pp_class.create_pcolor(magnetic_flux_x)
-pp_class.create_pcolor(reshape_mmf)
+
+
+
 

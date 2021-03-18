@@ -530,6 +530,19 @@ class MagneticField:
 
 
 
+    def formula_resistance_rmn_cell(self, i, j):
+        rmn = self.a[i][j].height() / (self.a[i][j].mu() * self.a[i][j].width() / 2 * self.L)
+        return rmn
+    def formula_resistance_rmt_cell(self, i, j):
+        rmt = self.a[i][j].width() / (self.a[i][j].mu() * self.a[i][j].height() / 2 * self.L)
+        return rmt
+    def formula_mmf_coil_cell(self, i, j):
+        mmf = self.a[i][j].width() * self.a[i][j].height() * self.a[i][j].current
+        return mmf
+
+    def formula_inductance_term_cell(self, i, j):
+        ind_term = 1j * self.a[i][j].width() * self.a[i][j].height() * self.a[i][j].sigma()
+        return ind_term
 
     def set_matrix_complex_cell(self, bc_fluxes_up=None, bc_fluxes_down=None,
                            bc_fluxes_right=None, bc_fluxes_left=None):
