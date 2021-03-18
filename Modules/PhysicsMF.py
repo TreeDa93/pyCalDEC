@@ -63,12 +63,10 @@ class MagneticField:
     def formula_resistance_rmt_up(self, i, j):
         """ The function describes formula of  mutual tangent magnetic resistance of circuit loop with the loop located
         to upper
-
         a[i][j].center.x is the value x coordianat of the center of  the i-th cell at the j-th layer
         a[i][j].height() is the height of the i-th cell at the j-th layer
         a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell located at the j-th layer
                         """
-
         rmt_up = self.a[i][j + 1].width() / (2 * self.a[i][j + 1].height() * self.L * self.a[i][j + 1].mu()) + \
                  self.a[i + 1][j + 1].width() / (2 * self.a[i + 1][j + 1].height() * self.L * self.a[i + 1][j + 1].mu())
         return rmt_up
@@ -82,11 +80,6 @@ class MagneticField:
         a[i][j].height() is the height of the i-th cell at the j-th layer
         a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell located at the j-th layer
                                """
-        # rmt_down = (self.a[i + 1][j].center.x - self.a[i][j].center.x) / \
-        #            (4 * self.a[i][j].height() * self.L) * (1 / self.a[i + 1][j].mu() + 1
-        #                                                    / self.a[i][j].mu())
-        # rmt_down = self.a[i][j].width() / (self.a[i][j].height() * self.L * self.a[i][j].mu()) + \
-        #            self.a[i+1][j].width() / (self.a[i+1][j].height() * self.L * self.a[i+1][j].mu())
         rmt_down = self.a[i][j].width() / (2 * self.a[i][j].height() * self.L * self.a[i][j].mu()) + \
                    self.a[i + 1][j].width() / (2 * self.a[i + 1][j].height() * self.L * self.a[i + 1][j].mu())
         return rmt_down
@@ -99,12 +92,6 @@ class MagneticField:
         a[i][j].height() is the height of the i-th cell at the j-th layer
         a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell located at the j-th layer
                                        """
-        # rmt = ((self.a[i + 1][j].center.x - self.a[i][j].center.x) /
-        #        (4 * self.a[i][j].height() * self.L) * (1 / self.a[i][j].mu()
-        #                                                + 1 / self.a[i + 1][j].mu())
-        #        + (self.a[i + 1][j + 1].center.x - self.a[i][j + 1].center.x) /
-        #        (4 * self.a[i][j + 1].height() * self.L) * (1 / self.a[i][j + 1].mu()
-        #                                                    + 1 / self.a[i + 1][j + 1].mu()))
         rmt = self.formula_resistance_rmt_up(i, j) + self.formula_resistance_rmt_down(i, j)
         return rmt
 
@@ -115,12 +102,6 @@ class MagneticField:
         a[i][j].height() is the height of the i-th cell at the j-th layer
         a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell located at the j-th layer
                                                """
-        # rmn = ((self.a[i][j + 1].center.y - self.a[i][j].center.y) /
-        #        (4 * self.a[i][j].width() * self.L) * (1 / self.a[i][j].mu()
-        #                                               + 1 / self.a[i][j + 1].mu())
-        #        + (self.a[i + 1][j + 1].center.y - self.a[i + 1][j].center.y) /
-        #        (4 * self.a[i + 1][j].width() * self.L) * (1 / self.a[i + 1][j].mu() + 1 /
-        #                                                   self.a[i + 1][j + 1].mu()))
         rmn = self.formula_resistance_rmn_left(i, j) + self.formula_resistance_rmn_right(i, j)
         return rmn
 
@@ -549,19 +530,7 @@ class MagneticField:
 
 
 
-    def formula_resistance_rmn_cell(self, i, j):
-        rmn = self.a[i][j].height() / (self.a[i][j].mu() * self.a[i][j].width() / 2 * self.L)
-        return rmn
-    def formula_resistance_rmt_cell(self, i, j):
-        rmt = self.a[i][j].width() / (self.a[i][j].mu() * self.a[i][j].height() / 2 * self.L)
-        return rmt
-    def formula_mmf_coil_cell(self, i, j):
-        mmf = self.a[i][j].width() * self.a[i][j].height() * self.a[i][j].current
-        return mmf
 
-    def formula_inductance_term_cell(self, i, j):
-        ind_term = 1j * self.a[i][j].width() * self.a[i][j].height() * self.a[i][j].sigma()
-        return ind_term
     def set_matrix_complex_cell(self, bc_fluxes_up=None, bc_fluxes_down=None,
                            bc_fluxes_right=None, bc_fluxes_left=None):
         """The function is intended to build the stiffness matrix of linear equations system.
