@@ -15,16 +15,22 @@ class MagneticField:
 
     """
 
-    def __init__(self, data, omega=0, L=1):
-        self.a = data  # Массив с описанием данных
-        self.L = 0.5
-        self.size_j = len(data[0]) - 1
-        self.size_i = len(data) - 1
+    def __init__(self, mesh, omega=0, L=0.5, label='mf'):
+        self.a = mesh.mesh  # Массив с описанием данных
+        self.L = L
+        self.size_i = mesh.sizeX - 1
+        self.size_j = mesh.sizeY - 1
         self.size = self.size_i * self.size_j
         self.omega = omega
-        self.j = len(data[0])
-        self.i = len(data)
+        self.i = mesh.sizeX
+        self.j = mesh.sizeY
         self.size_cell = self.i * self.j
+
+    def definiceCurrent(self, current=1000, body='coil'):
+        for x in range(self.i):
+            for y in range(self.j):
+                if self.a[x][y].body == body:
+                    self.a[x][y].defineCurrent(current)
 
     def formula_resistance_rmn_left(self, i, j):
         """ The function describes formula of  mutual normal magnetic resistance of circuit loop with the loop located

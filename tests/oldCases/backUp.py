@@ -1,9 +1,3 @@
-
-
-#from Data import *  # Import the general data of the model
-from Preprocessing import *
-from Discretization import *
-
 """The part of the program is to set up generals features of the model"""
 air = Material(0, 1)
 # copper = Material(4.528e7, 1)
@@ -77,4 +71,3 @@ pp_class.create_pcolor(magnetic_flux_x)
 # major_dia = r.diagonal()
 # up_dia = r.diagonal(offset=1)
 # down_dia = r.diagonal(offset=-1)
-
