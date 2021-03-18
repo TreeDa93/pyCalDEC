@@ -138,3 +138,4 @@ reshape_mmf = pp_class.reshape_data(mmf)
 pp_class.create_pcolor(magnetic_flux_y)
 pp_class.create_pcolor(magnetic_flux_x)
 pp_class.create_pcolor(reshape_mmf)
+
