@@ -135,6 +135,3 @@ magnetic_flux_x = pp_class.calculate_magnetic_flux_x(reshape_sol)
 magnetic_flux_y = pp_class.calculate_magnetic_flux_y(reshape_sol)
 reshape_mmf = pp_class.reshape_data(mmf)
 
-pp_class.create_pcolor(magnetic_flux_y)
-pp_class.create_pcolor(magnetic_flux_x)
-pp_class.create_pcolor(reshape_mmf)
