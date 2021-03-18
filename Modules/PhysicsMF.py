@@ -68,11 +68,7 @@ class MagneticField:
         a[i][j].height() is the height of the i-th cell at the j-th layer
         a[i][j].mu() is the method calling values of magnetic permeability at the i-th cell located at the j-th layer
                         """
-        # rmt_up = (self.a[i + 1][j + 1].center.x - self.a[i][j + 1].center.x) / \
-        #          (4 * self.a[i][j + 1].height() * self.L) * \
-        #          (1 / self.a[i + 1][j + 1].mu() + 1 / self.a[i][j + 1].mu())
-        # rmt_up = self.a[i][j+1].width() / (self.a[i][j+1].height() * self.L * self.a[i][j+1].mu()) + \
-        #             self.a[i+1][j+1].width() / (self.a[i+1][j+1].height() * self.L * self.a[i+1][j+1].mu())
+
         rmt_up = self.a[i][j + 1].width() / (2 * self.a[i][j + 1].height() * self.L * self.a[i][j + 1].mu()) + \
                  self.a[i + 1][j + 1].width() / (2 * self.a[i + 1][j + 1].height() * self.L * self.a[i + 1][j + 1].mu())
         return rmt_up
