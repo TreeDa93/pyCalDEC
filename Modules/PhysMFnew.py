@@ -188,102 +188,6 @@ class MagneticField2:
                    (velocity_y * delta_x) / (4 * self.L) * (self.a[i][j].sigma() + self.a[i + 1][j].sigma())
         return rmt_down
 
-    def set_matrix_complex_2(self, bc_fluxes_up=None, bc_fluxes_down=None,
-                                 bc_fluxes_right=None, bc_fluxes_left=None):
-        """The function is intended to build the stiffness matrix of linear equations system.
-        Matrix filling occurs from left to right and to the top. Namely, the first equation is being built for
-        the first cell with indexes (0, 0). The function write the self resistance at general diagonal (0, 0) velue of
-        right normal mutual resistance at (0 , 1) because the resistance is mutual with second loop flux. and R_up is
-        written to (0, j_size) because the resistance is mutual with loop upper flux, that we can obtain index of
-        the flux we should add number of cells at the layer. Next equation well be written for sencod loop flux with
-        index (0, 1) and so on.
-
-                0       1       2        3       j
-         0   |R_self  R-right    -       -       R_up   |
-         1   |R_l     R_self   R-right                  |
-         j   |-         R_l     R_self   R-right        |
-         3   |-                  R_l     R_self         |
-             |                                          |
-         j   |R_d                                 R_self|
-
-        r is the variables contained values of stiffness matrix elements. It has size the number of cells minus one
-        at layer and the number of layers minus one.
-        counter is special advanced variable to understand current cell number.
-        """
-        r = np.zeros((self.size, self.size), dtype=complex)
-        mmf_bc_up = np.zeros(self.size, dtype=complex)
-        mmf_bc_down = np.zeros(self.size, dtype=complex)
-        mmf_bc_right = np.zeros(self.size, dtype=complex)
-        mmf_bc_left = np.zeros(self.size, dtype=complex)
-        if bc_fluxes_up is None:
-            bc_fluxes_up = np.zeros(self.size_i, dtype=complex)
-        if bc_fluxes_down is None:
-            bc_fluxes_down = np.zeros(self.size_i, dtype=complex)
-        if bc_fluxes_right is None:
-            bc_fluxes_right = np.zeros(self.size_j, dtype=complex)
-        if bc_fluxes_left is None:
-            bc_fluxes_left = np.zeros(self.size_j, dtype=complex)
-        counter = 0
-
-        for j in range(self.size_j):
-            for i in range(self.size_i):
-                r[counter, counter] = self.formula_self_resistance(i, j) + self.formula_inductance_term(i, j)
-                counter += 1
-
-        counter = 0
-        counter_bc = 0
-
-        for j in range(self.size_j):
-            for i in range(self.size_i):
-                if counter >= (self.size - self.size_i):
-                    mmf_bc_up[counter] = -self.formula_resistance_rmt_up(i, j) * bc_fluxes_up[counter_bc]
-                    counter += 1
-                    counter_bc += 1
-                else:
-                    r[counter, counter + self.size_i] = -self.formula_resistance_rmt_up(i, j)
-                    counter += 1
-
-        counter = 0
-        counter_bc = 0
-        for j in range(self.size_j):
-            for i in range(self.size_i):
-                if counter < self.size_i:
-                    mmf_bc_down[counter] = -self.formula_resistance_rmt_down(i, j) * bc_fluxes_down[counter_bc]
-                    counter += 1
-                    counter_bc += 1
-                else:
-                    r[counter, counter-self.size_i] = -self.formula_resistance_rmt_down(i, j)
-                    counter += 1
-
-        counter = 0
-        counter_bc = 0
-        stopper = 0
-        for j in range(self.size_j):
-            for i in range(self.size_i):
-                if counter == stopper:
-                    mmf_bc_left[counter] = -self.formula_resistance_rmn_left(i, j) * bc_fluxes_left[counter_bc]
-                    counter += 1
-                    counter_bc += 1
-                    stopper += self.size_i
-                else:
-                    r[counter, counter-1] = -self.formula_resistance_rmn_left(i, j)
-                    counter += 1
-
-        counter = 0
-        counter_bc = 0
-        stopper = self.size_i - 1
-        for j in range(self.size_j):
-            for i in range(self.size_i):
-                if counter == stopper:
-                    mmf_bc_right[counter] = -self.formula_resistance_rmn_right(i, j) * bc_fluxes_right[counter_bc]
-                    counter += 1
-                    counter_bc += 1
-                    stopper += self.size_i
-                else:
-                    r[counter, counter+1] = -self.formula_resistance_rmn_right(i, j)
-                    counter += 1
-        return r, mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down
-
 
     def initMatrixResistence(self):
         self.matrixMagResistence = np.zeros((self.size, self.size), dtype=complex)
@@ -301,14 +205,15 @@ class MagneticField2:
 
 
     def runner(self):
-        for i in self.a:
-            for j in i:
-                return j
+        for indexX, valueX in enumerate(self.a):
+            for indexY, value, in enumerate(valueX):
+                return value, indexX, indexY
 
     def defineMatrix(self):
 
-        cell = self.runner()
-
-        self.matrixMagResistence[cell.index, cell.index] = self.formula_self_resistance(i, j) \
-                                                             + self.formula_inductance_term(i, j)
-
+        #cell, i, j = self.runner()
+        for i, valueX in enumerate(self.a):
+            for j, cell, in enumerate(valueX):
+                self.matrixMagResistence[cell.index, cell.index] = self.formula_self_resistance(i, j) \
+                                                                     + self.formula_inductance_term(i, j)
+        return self.matrixMagResistence

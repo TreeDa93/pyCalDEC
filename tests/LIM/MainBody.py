@@ -118,7 +118,8 @@ mmf = mf.mmf(mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down)
 from Modules.PhysMFnew import MagneticField2
 
 mf2 = MagneticField2(mesh1, omega=314, label='mf2')
-r2 = mf2.calculateSelfResistence()
+mf2.initMatrixResistence()
+r2 = mf2.defineMatrix()
 
 
 
