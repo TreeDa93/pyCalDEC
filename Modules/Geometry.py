@@ -1,14 +1,21 @@
 from Modules.DiscretizationNew import Coord
 
 class Geometry:
-    gNodes = {}
+    """Это класс предназначен для описания основных улов геометрии"""
+
+
+    gNodes = {} # инициализируем словарь для узлов геометрии
 
 
     def __init__(self, label=''):
-        self.label = label
+        self.label = label  # определяем имя геометрии
 
 
     def rect(self, height, width, intial=('intialX', 'intialY'), label='rect'):
+        """Создаем прямоугольник с высотой height шириной width
+        левый нижний угол intial = (x,y)
+        label - имя узла
+        """
         start = Coord(intial[0], intial[1])
         distr = [[start, Coord(start.x+width, start.y+height)]]
         self.gNodes[label] = distr
@@ -36,7 +43,11 @@ class Geometry:
         return self
 
     def copy(self, object, gNodesLabel='test', step=('xStep', 'yStep'), number=1, label='copy'):
-        """Копирует указаный ухел шеометрии"""
+        """Копирует указаный узел геометрии с помощб лейбла (gNodesLabel)
+        Копирует с шагом step =(x-step, y-step)
+        number - сколько раз копировать
+        label - новый лейбл скопированного узла
+        """
         distr = []
         step = Coord(step[0], step[1])
         for i in range(number):
