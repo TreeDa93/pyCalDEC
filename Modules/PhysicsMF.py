@@ -641,17 +641,7 @@ class MagneticField:
                     counter += 1
         return r, mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down
 
-    def test_fun(self):
-        r = np.zeros((self.size_cell, self.size_cell), dtype=complex)
-        counter = 0
-        for j in range(self.j):
-            for i in range(self.i):
-                r[counter, counter] = (self.formula_resistance_rmt_cell(i, j)
-                                                     + self.formula_resistance_rmn_cell(i, j)) \
-                                                + self.formula_inductance_term_cell(i, j)
-                counter += 1
 
-        return r
 
     def set_matrix_complex_2(self, bc_fluxes_up=None, bc_fluxes_down=None,
                                  bc_fluxes_right=None, bc_fluxes_left=None):

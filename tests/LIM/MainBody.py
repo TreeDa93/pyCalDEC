@@ -100,9 +100,10 @@ Material().setMat(mesh1, material=matIron, body='SE2')
 Material().setMat(mesh1, material=matAir, body=None)
 
 # Определим параметры магнитной системы
+
 from Modules.PhysicsMF import MagneticField
 mf = MagneticField(mesh1, omega=314, label='mf1')
-# в каких областях меется ток, зададим
+# в каких областях имеется ток, зададим
 mf.definiceCurrent(current=current_a, body='coil1')
 mf.definiceCurrent(current=current_z, body='coil2')
 mf.definiceCurrent(current=current_b, body='coil3')
@@ -118,8 +119,18 @@ mmf = mf.mmf(mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down)
 from Modules.PhysMFnew import MagneticField2
 
 mf2 = MagneticField2(mesh1, omega=314, label='mf2')
-mf2.initMatrixResistence()
-r2 = mf2.defineMatrix()
+mf2.definiceCurrent(current=current_a, body='coil1')
+mf2.definiceCurrent(current=current_z, body='coil2')
+mf2.definiceCurrent(current=current_b, body='coil3')
+mf2.definiceCurrent(current=current_x, body='coil4')
+mf2.definiceCurrent(current=current_c, body='coil5')
+mf2.definiceCurrent(current=current_y, body='coil6')
+
+mf2.defineMatrixis()
+
+import Modules.Solvers as sol
+
+solution = sol.solve_it_ling(mf2.weightMatrix, mf2.rightMatrix)
 
 
 
