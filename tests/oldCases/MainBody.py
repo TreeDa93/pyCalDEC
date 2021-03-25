@@ -83,7 +83,6 @@ pp_class.create_pcolor(magnetic_flux_x)
 pp_class.create_pcolor(reshape_mmf)
 
 
-
 if __name__ == '__main__':
     main()
 

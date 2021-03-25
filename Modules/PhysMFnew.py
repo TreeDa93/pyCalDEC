@@ -15,21 +15,20 @@ class MagneticField2:
     """
 
     def __init__(self, mesh, omega=0, L=0.5, label='mf'):
-        self.a = mesh.mesh  # Массив с описанием данных
+        self.mesh = mesh
+        self.cells = mesh.mesh  # Массив с описанием данных
+        self.paramertrs = ParametrsMF(omega, L)
         self.L = L
-        self.size_i = mesh.sizeX - 1
-        self.size_j = mesh.sizeY - 1
-        self.size = self.size_i * self.size_j
         self.omega = omega
         self.i = mesh.sizeX
         self.j = mesh.sizeY
         self.size_cell = self.i * self.j
 
     def definiceCurrent(self, current=1000, body='coil'):
-        for x in range(self.i):
-            for y in range(self.j):
-                if self.a[x][y].body == body:
-                    self.a[x][y].defineCurrent(current)
+        for x in range(self.mesh.sizeX):
+            for y in range(self.mesh.sizeY):
+                if self.cells[x][y].body == body:
+                    self.cells[x][y].defineCurrent(current)
 
     def defineMatrixis(self):
         """Метод, который инициаоизирует матрицы жесткости и свободных членов и расчитывает их"""
@@ -39,7 +38,7 @@ class MagneticField2:
 
     def selfResistenceMatrixCell(self):
         """Метод расчитывает собственные сопротивления системы и определяет МДС по заданным токам"""
-        for i, valueX in enumerate(self.a):
+        for i, valueX in enumerate(self.cells):
             for j, cell, in enumerate(valueX):
                 # расчитываем главную диагональ
                 self.weightMatrix[cell.index, cell.index] = self.formulaIndTerCell(i, j) +\
@@ -52,9 +51,9 @@ class MagneticField2:
 
     def mutualResistenceMatrixCell(self):
         """Метод расчитывает взаимные сопротивления системы и определяет ГУ"""
-        xnum = self.i -1
-        ynum = self.j -1
-        for i, valueX in enumerate(self.a):
+        xnum = self.mesh.sizeX -1
+        ynum = self.mesh.sizeY -1
+        for i, valueX in enumerate(self.cells):
             for j, cell, in enumerate(valueX):
                 # down resistence####
                 if j == 0:  # первый слой по x (x - fixed)
@@ -89,19 +88,19 @@ class MagneticField2:
 
 
     def formulaResistenceYCell(self, i, j):
-        r = self.a[i][j].height() / (self.a[i][j].mu() * self.a[i][j].width() / 2 * self.L)
+        r = self.cells[i][j].height() / (self.cells[i][j].mu() * self.cells[i][j].width() / 2 * self.L)
         return r
 
     def formulaResistenceXCell(self, i, j):
-        r = self.a[i][j].width() / (self.a[i][j].mu() * self.a[i][j].height() / 2 * self.L)
+        r = self.cells[i][j].width() / (self.cells[i][j].mu() * self.cells[i][j].height() / 2 * self.L)
         return r
 
     def formulaIndTerCell(self, i, j):
-        rm = -1j * self.omega * self.a[i][j].calculateSquare() * self.a[i][j].sigma() / self.L
+        rm = -1j * self.omega * self.cells[i][j].calculateSquare() * self.cells[i][j].sigma() / self.L
         return rm
 
     def formula_mmf_coil_cell(self, i, j):
-        mmf = self.a[i][j].calculateSquare() * self.a[i][j].current
+        mmf = self.cells[i][j].calculateSquare() * self.cells[i][j].current
         return mmf
 
     def initMatrixResistenceCell(self):
@@ -109,6 +108,12 @@ class MagneticField2:
         self.rightMatrix = np.zeros(self.size_cell, dtype=complex)
 
 
+
+class ParametrsMF:
+
+    def __init__(self, L, omega):
+        self.L = L
+        self.omega = omega
 
 
 

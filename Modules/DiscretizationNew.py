@@ -84,7 +84,7 @@ class Cell:
 
 
     def __init__(self,body=None, material=None, center=None, initial=None, tp=None, velocity=None, index=None,
-                 current=0.0):
+                 current=0.0, indexX=None, indexY=None):
         self.mat = material  # словарь с набором физических свойств клетки
         self.center = center  # координаты центра клетки (x, y)
         self.type = tp  # тип клетки  string
@@ -93,6 +93,8 @@ class Cell:
         self.index = index  # значение индекса клетки
         self.current = current  # значение тока в клетке
         self.body = body   # имя тела в этой  клетке string
+        self.indexX = indexX
+        self.indexY = indexY
 
     def height(self):
         """Метод вычисляет высоту клетки"""
@@ -320,8 +322,35 @@ class Mesh():
             for indexY, centerY in enumerate(listCenterY):
                 mesh[indexX][indexY] = Cell(center=Coord(centerX, centerY),
                     initial=Coord(self.axisX[indexX], self.axisY[indexY]),
-                    index=i)
+                    index=i, indexX=indexX, indexY=indexY)
                 i+=1
         self.mesh = mesh
         self.sizeX = len(listCenterX)
         self.sizeY = len(listCenterY)
+        self.centerX = listCenterX
+        self.centerY = listCenterY
+
+        #self.oneDimMesh = OneDimMesh.setOneDimMesh(self.axisX, self.axisY, self.centerX, self.centerY, 0,0,0)
+
+        #self.paramMesh = ParamMesh.setParametrs(self.sizeX, self.sizeY)
+
+
+
+class OneDimMesh():
+
+    def setOneDimMesh(self, axisX, axisY, centerX, centerY, regionAxisX, regionAxisY):
+
+        self.axisX = axisX
+        self.axisY = axisY
+        self.centerx = centerX
+        self.centery = centerY
+        self.regionAxisX = regionAxisX
+        self.regionAxisY = regionAxisY
+
+
+class ParamMesh():
+
+    def setParametrs(self, sizeX, sizeY):
+        self.sizeX = sizeX
+        self.sizeY = sizeY
+        self.seze = sizeX * sizeY

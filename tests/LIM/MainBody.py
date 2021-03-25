@@ -101,20 +101,6 @@ Material().setMat(mesh1, material=matAir, body=None)
 
 # Определим параметры магнитной системы
 
-from Modules.PhysicsMF import MagneticField
-mf = MagneticField(mesh1, omega=314, label='mf1')
-# в каких областях имеется ток, зададим
-mf.definiceCurrent(current=current_a, body='coil1')
-mf.definiceCurrent(current=current_z, body='coil2')
-mf.definiceCurrent(current=current_b, body='coil3')
-mf.definiceCurrent(current=current_x, body='coil4')
-mf.definiceCurrent(current=current_c, body='coil5')
-mf.definiceCurrent(current=current_y, body='coil6')
-
-
-
-r, mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down = mf.set_matrix_complex_2()
-mmf = mf.mmf(mmf_bc_right, mmf_bc_left, mmf_bc_up, mmf_bc_down)
 
 from Modules.PhysMFnew import MagneticField2
 
@@ -132,9 +118,21 @@ import Modules.Solvers as sol
 
 solution = sol.solve_it_ling(mf2.weightMatrix, mf2.rightMatrix)
 
+import Modules.PostProcessingNew as pp
 
+postProc = pp.PostProcessing(solution, mf2)
+postProc.dataCounturMatrix()
+postProc.dataCounturColumn()
+postProc.reshapeToColumn(dataMatrix=postProc.data['dataCounturMatrix']['value'])
+postProc.createGrid(label='newGrid')
+postProc.calculateMfFluxMatrix(data=postProc.data['dataCounturMatrix']['value'])
+postProc.calculateFluxDensity(data=postProc.data['dataCounturMatrix']['value'])
+postProc.calculateCurrentDensity(data=postProc.data['FluxDensity'])
+postProc.calculateLorentzForce(dataCurrent=postProc.data['CurrentDensity'], dataFluxDensity=postProc.data['FluxDensity'])
+postProc.calculateJouleLosses(dataCurrentDensity=postProc.data['CurrentDensity'])
 
+from matplotlib.pyplot import  pcolormesh, pcolor
 
-
-
-
+pcolor(postProc.data['CurrentDensity']['Z'].real)
+pcolor(postProc.data['CurrentDensity']['axisY'],postProc.data['CurrentDensity']['axisX'], postProc.data['CurrentDensity']['Z'].real, shading='nearest')
+pcolor(postProc.data['FluxDensity']['axisY'],postProc.data['FluxDensity']['axisX'], postProc.data['FluxDensity']['X'].real, shading='nearest')
