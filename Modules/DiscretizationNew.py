@@ -165,6 +165,21 @@ class Cell:
         square = self.height()*self.width()
         return square
 
+    def addTypeCell(self, cellType='General'):
+        self.cellType = cellType
+
+    def addTypeApproximation(self, addTypeApproximation='central'):
+        self.typeApproximation = addTypeApproximation
+
+    def setTemperatureInitial(self, T):
+        self.temperatureInitial = T
+
+    def setTemperatureBC(self, T):
+        self.temperatureBC = T
+
+    def setBCtype(self, bc=None):
+        self.bcType = bc
+
     def __repr__(self):
         return f"Body({self.body}) Material({self.mat}) Center({self.center}) Initial=({self.init} Type=({self.type}) " \
                f"Velocity=({self.vel})"
@@ -330,10 +345,25 @@ class Mesh():
         self.centerX = listCenterX
         self.centerY = listCenterY
 
-        #self.oneDimMesh = OneDimMesh.setOneDimMesh(self.axisX, self.axisY, self.centerX, self.centerY, 0,0,0)
+        self.oneDimMesh = OneDimMesh()
+        self.oneDimMesh.setOneDimMesh(self.axisX, self.axisY, self.centerX, self.centerY,
+                                                     self.regionAxisX, self.regionAxisY)
+        self.paramMesh = ParamMesh()
+        self.paramMesh.setParametrs(self.sizeX, self.sizeY)
 
-        #self.paramMesh = ParamMesh.setParametrs(self.sizeX, self.sizeY)
+    def create1DMesh(self, axis='x'):
 
+        if axis == 'x':
+            listCenter = self.center(self.axisX)
+        elif axis == 'y':
+            listCenter = self.center(self.axisY)
+        mesh1D = [0 for i in range(len(listCenter))]
+        for index, cellCenter in enumerate(listCenter):
+            mesh1D[index] = Cell(center=Coord(cellCenter, cellCenter),
+                                        initial=Coord(self.axisX[index], self.axisX[index]),
+                                        index=index, indexX=index, indexY=index)
+
+        self.mesh1D = mesh1D
 
 
 class OneDimMesh():

@@ -59,25 +59,25 @@ class MagneticField2:
                 if j == 0:  # первый слой по x (x - fixed)
                     self.rightMatrix[cell.index] += 0
                 else:
-                    self.weightMatrix[cell.index, cell.index - 1] = self.formulaResistenceXCell(i, j)
+                    self.weightMatrix[cell.index, cell.index - 1] = -self.formulaResistenceXCell(i, j-1)
 
                 # up resistence######
                 if j == ynum:
                     self.rightMatrix[cell.index] += 0
                 else:
-                    self.weightMatrix[cell.index, cell.index + 1] = self.formulaResistenceXCell(i, j)
+                    self.weightMatrix[cell.index, cell.index + 1] = -self.formulaResistenceXCell(i, j+1)
 
                 # left resistence ####
                 if i == 0:  # первый слой по x (x - fixed)
                     self.rightMatrix[cell.index] += 0
                 else:
-                    self.weightMatrix[cell.index, cell.index-ynum] = self.formulaResistenceYCell(i, j)
+                    self.weightMatrix[cell.index, cell.index-ynum] = -self.formulaResistenceYCell(i-1, j)
 
                 # right resistence ####
                 if i == xnum:  # последний слой по x (x - fixed)
                     self.rightMatrix[cell.index] += 0
                 else:
-                    self.weightMatrix[cell.index, cell.index+ynum] = self.formulaResistenceYCell(i, j)
+                    self.weightMatrix[cell.index, cell.index+ynum] = -self.formulaResistenceYCell(i+1, j)
 
 
 

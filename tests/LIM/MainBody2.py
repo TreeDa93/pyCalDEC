@@ -35,7 +35,7 @@ pDiscret - значение параметра дискритизации есл
 body1 = {'label' : 'Tooth',
         'length' : Bz,
         'type' : 'numberElem',
-        'pDiscret' : 6}
+        'pDiscret' : 4}
 
 body2 = {'label' : 'Slot',
         'length' : Bp,
@@ -60,9 +60,9 @@ mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=Hp, axis='y', n
 mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=dz, axis='y', numberElem=3,
                     lengthDisctr=None,label='gap')
 
-mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=d_se, axis='y', numberElem=8,
+mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=d_se, axis='y', numberElem=4,
                     lengthDisctr=None,label='se1')
-mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=d_se, axis='y', numberElem=6,
+mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=d_se, axis='y', numberElem=4,
                     lengthDisctr=None,label='se2')
 mesh1.discretRegion(startPoint=mesh1.lastPoint(axis='y'), length=marg, axis='y', numberElem=4,
                     lengthDisctr=None,label='margYup')
@@ -81,8 +81,7 @@ from Modules.Materials import Material
 #Создадим три основных шаблона
 matAir = Material(conductivity=0, permeability=1, labelMat='air')
 matCooper = Material(conductivity=5e7, permeability=1, labelMat='cooper')
-matIron = Material(conductivity=0, permeability=1000, labelMat='iron')
-matSE = Material(conductivity=5e7, permeability=1, labelMat='SE1')
+matIron = Material(conductivity=1e4, permeability=1000, labelMat='iron')
 
 #Определим свойства материала для каждого боди
 Material().setMat(mesh1, material=matIron, body='inductor1')
@@ -93,7 +92,7 @@ Material().setMat(mesh1, material=matCooper, body='coil4')
 Material().setMat(mesh1, material=matCooper, body='coil5')
 Material().setMat(mesh1, material=matCooper, body='coil6')
 
-Material().setMat(mesh1, material=matSE, body='SE1')
+Material().setMat(mesh1, material=matIron, body='SE1')
 Material().setMat(mesh1, material=matIron, body='SE2')
 
 # для области где тела не определены задаем свойства воздуха
@@ -103,9 +102,9 @@ Material().setMat(mesh1, material=matAir, body=None)
 # Определим параметры магнитной системы
 
 
-from Modules.PhysMFnew import MagneticField2
+from Modules.PhysicMF4Cells import MagneticField
 
-mf2 = MagneticField2(mesh1, omega=314, label='mf2')
+mf2 = MagneticField(mesh1, omega=314, label='mf2')
 mf2.definiceCurrent(current=current_a, body='coil1')
 mf2.definiceCurrent(current=current_z, body='coil2')
 mf2.definiceCurrent(current=current_b, body='coil3')
@@ -113,28 +112,47 @@ mf2.definiceCurrent(current=current_x, body='coil4')
 mf2.definiceCurrent(current=current_c, body='coil5')
 mf2.definiceCurrent(current=current_y, body='coil6')
 
-mf2.defineMatrixis()
+mf2.set_matrix_complex()
 
 import Modules.Solvers as sol
 
 solution = sol.solve_it_ling(mf2.weightMatrix, mf2.rightMatrix)
 
-import Modules.PostProcessingNew as pp
+import Modules.PostProcessing4Cells as pp
 
 postProc = pp.PostProcessing(solution, mf2)
+
 postProc.dataCounturMatrix()
-postProc.dataCounturColumn()
-postProc.reshapeToColumn(dataMatrix=postProc.data['dataCounturMatrix']['value'])
-postProc.createGrid(label='newGrid')
-postProc.calculateMfFluxMatrix(data=postProc.data['dataCounturMatrix']['value'])
-postProc.calculateFluxDensity(data=postProc.data['dataCounturMatrix']['value'])
-postProc.calculateCurrentDensity(data=postProc.data['FluxDensity'])
-postProc.calculateLorentzForce(dataCurrent=postProc.data['CurrentDensity'], dataFluxDensity=postProc.data['FluxDensity'])
-postProc.calculateJouleLosses(dataCurrentDensity=postProc.data['CurrentDensity'])
+postProc.dataMagFluxMatrix()
+from matplotlib.pyplot import  pcolormesh, pcolor, streamplot
+pcolor(postProc.data['dataCounturMatrix'].real)
+pcolor(postProc.data['magneticFluxDensity']['abs'].real)
 
-from matplotlib.pyplot import  pcolormesh, pcolor
+omegat = ma.pi/2#ma.pi/4
+multiplyer = np.exp(omegat*1j)
+#z = postProc.data['magneticFlux']['abs']
+#zfinal = (z * multiplyer).real
+#pcolor(x, y, zfinal, shading='flat')
 
-pcolor(postProc.data['CurrentDensity']['Z'].real)
-pcolor(postProc.data['CurrentDensity']['axisY'],postProc.data['CurrentDensity']['axisX'], postProc.data['CurrentDensity']['Z'].real, shading='nearest')
-pcolor(postProc.data['FluxDensity']['axisY'],postProc.data['FluxDensity']['axisX'], postProc.data['FluxDensity']['X'].real, shading='nearest')
-pcolor(postProc.data['MfFluxMatrix']['Y'].real)
+
+x=postProc.data['magneticFluxDensity']['axisX']
+y=postProc.data['magneticFluxDensity']['axisY']
+u=postProc.data['magneticFluxDensity']['x'].real
+v=postProc.data['magneticFluxDensity']['y'].real
+
+X, Y = np.meshgrid(x, y)
+X = X.reshape(1 ,748)
+Y = Y.reshape(1, 748)
+U = u.reshape(1, 748)
+V = v.reshape(1, 748)
+from scipy import interpolate
+#streamplot(X[0], Y[0], U[0], V[0])
+f = interpolate.interp2d(X, Y, U)
+xNew = np.linspace(x.min(), x.max(), 2000)
+yNew = np.linspace(y.min(), y.max(), 2000)
+zNew = f(xNew, yNew)
+pcolor(xNew, yNew, zNew, shading='flat')
+
+
+
+

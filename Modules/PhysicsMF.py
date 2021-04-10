@@ -16,12 +16,15 @@ class MagneticField:
     """
 
     def __init__(self, mesh, omega=0, L=0.5, label='mf'):
-        self.a = mesh.mesh  # Массив с описанием данных
+        self.cells = mesh.mesh  # Массив с описанием данных
+        self.mesh = mesh
+
         self.L = L
+        self.omega = omega
         self.size_i = mesh.sizeX - 1
         self.size_j = mesh.sizeY - 1
         self.size = self.size_i * self.size_j
-        self.omega = omega
+
         self.i = mesh.sizeX
         self.j = mesh.sizeY
         self.size_cell = self.i * self.j
